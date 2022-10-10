@@ -1,6 +1,7 @@
 from starlette.responses import StreamingResponse
 from fastapi import FastAPI, File, UploadFile
 import requests
+import json
 
 #We generate a new FastAPI app in the Prod environment
 #https://fastapi.tiangolo.com/
@@ -11,7 +12,10 @@ app = FastAPI(title='Face FastAPI')
 
 @app.get("/", tags=["Health Check"])
 async def root():
-    return {requests.get("http://bokeh:8001/"), requests.get("http://emotion:8002/")}
+    return {
+        "face-bokeh": json.loads(requests.get("http://bokeh:8001/").text).get("message", ""),
+        "face-emotion": json.loads(requests.get("http://emotion:8002/").text).get("message", ""),
+    } 
 
 
 # At least 20G
